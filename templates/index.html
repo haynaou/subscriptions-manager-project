@@ -1,11 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyAPP</title>
-</head>
-<body>
+  {% extends "layout.html" %}
+  
+  {% block main %}
     
-</body>
-</html>
+      <div class="jumbotron jumbotron-fluid">
+        <div class=" text-center">
+          <h1 class="display-4">Fluid jumbotron</h1>
+          <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+        </div>
+        
+        <div class="container w-50 mt-5 text-center">
+          <a href="/login" class="btn btn-primary mr-5 index-btn">Login</a>
+          <a href="#" class="btn btn-primary index-btn">Register</a>
+        </div>
+
+      </div>
+
+  {% endblock %}

@@ -29,12 +29,9 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.route('/create')
-def create():
-    user = User(full_name='bb', email='ll', password= 'kk' )
-    db.session.add(user)
-    db.session.commit()
-    return 'Created user'
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/get')
 def get():
