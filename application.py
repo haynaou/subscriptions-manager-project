@@ -4,6 +4,8 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
 from models import User, db
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 # Configure application
 app = Flask(__name__)
@@ -37,10 +39,42 @@ def index():
 def home():
     return render_template('home.html')
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
     '''Log user In'''
-    return render_template('login.html')
+    # Forget any user_id
+    session.clear()
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure email was submitted
+        if not email:
+            return "must provide an email"
+
+        # Ensure password was submitted
+        elif not password:
+            return "must provide password"
+
+        # Query database for username
+        user = User.query.filter_by(email=email)
+
+    #     # Ensure username exists and password is correct
+    #     if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+    #         return apology("invalid username and/or password", 403)
+
+    #     # Remember which user has logged in
+    #     session["user_id"] = rows[0]["id"]
+
+    #     # Redirect user to home page
+    #     return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
 
 @app.route('/register' , methods=["GET", "POST"])
 def register():
@@ -50,33 +84,38 @@ def register():
         return render_template("register.html")
 
     if request.method == "POST":
-        if request.method == "POST":
-            username = request.form.get("username")
-            password = request.form.get("password")
-            confirmation = request.form.get("confirmation")
+        full_name = request.form.get("full_name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
 
-        # Validate username
-        if not username or username == '':
-            return "Must provide username"
+        # Validate email
+        if not email or email == '':
+            return "Must provide email"
 
         # Validate password
         if not password or password == '':
-            return "Must provide username"
+            return "Must provide password"
 
         # Validate password confirmation
         if not confirmation or confirmation == '':
-            return "Must provide username"
+            return "Must provide password confirmation"
+        
         # Ensure password and password confirmation match
         if confirmation != password:
-            return "Must provide username"
+            return "Password and confirmation do not match"
 
-        # Ensure username doesn't already taken
-        rows = User.query.filter_by(request.form.get("username"))
-        if len(rows) == 1:
-            return "Username already taken"
+        # Ensure email isn't already taken
+        num = User.query.filter_by(email=email).count()
+        print(num)
+        if num > 0:
+            return "Email already taken"
 
         # Create new user
-        
+        new_user = User(full_name= full_name, email=email, password=generate_password_hash(password))
+        print(new_user)
+        db.session.add(new_user)
+        db.session.commit()
 
         # Redirect user to login page
         return redirect("/login")
