@@ -11,8 +11,8 @@ class User(db.Model):
     password = db.Column(db.Text(), nullable=False)
     subscriptions = db.relationship("Subscription")
 
-    # def __repr__(self):
-    #     return '<User %r>' % self.full_name
+    def __repr__(self):
+        return '<User %r>' % self.full_name
 
 class Recurrence(enum.Enum):
     weekly = 1

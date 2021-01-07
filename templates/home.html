@@ -1,26 +1,74 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Symbol</th>
-                <th>Shares</th>
-                <th>Price</th>
-                <th>Transacted</th>
-            </tr>
-        </thead>
-        <tbody>
+<!--Add Subscription-->
+<div class="container">
+    <div class="my-4 text-right">
+        <a href="/add-subscription" type="submit" class="btn btn-outline-secondary mb-2 mt-5">Add Subscription</a>
+    </div>
 
-            <!-- {% for transaction in transactions %}
-                <tr>
-                    <td>{{transaction['symbol']}}</td>
-                    <td>{{transaction['quantity']}}</td>
-                    <td>${{transaction['price']}}</td>
-                    <td>{{transaction['created']}}</td>
-                </tr>
-            {% endfor %} -->
+    <div class="mt-5 d-flex justify-content-between flex-wrap">
+        
+        <a href="/subscription/0" class="card mb-5" style="width: 12rem; height: 6rem">
+            <div class="card-body d-flex justify-content-between">
+                <div class="pr-3 bg-white border-none">
+                    <img height="50" width="50" src="https://unpkg.com/simple-icons@v4/icons/spotify.svg" />
+                </div>
+                <div class="text-right">
+                    <h2 class="m-0">$10</h2>
+                    <p class="small m-0">monthly</p>
+                </div>
+            </div>
+        </a>
 
-        </tbody>
-    </table>
-{% endblock %}
+        <a href="/subscription/1" class="card mb-5" style="width: 12rem; height: 6rem">
+            <div class="card-body d-flex justify-content-between">
+                <div class="pr-3 bg-white border-none">
+                    <img height="50" width="50" src="https://unpkg.com/simple-icons@v4/icons/netflix.svg" />
+                </div>
+                <div class="text-right">
+                    <h2 class="m-0">$10</h2>
+                    <p class="small m-0">monthly</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="/subscription/2" class="card mb-5" style="width: 12rem; height: 6rem">
+            <div class="card-body d-flex justify-content-between">
+                <div class="pr-3 bg-white border-none">
+                    <img height="50" width="50" src="https://unpkg.com/simple-icons@v4/icons/amazon.svg" />
+                </div>
+                <div class="text-right">
+                    <h2 class="m-0">$10</h2>
+                    <p class="small m-0">monthly</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="/subscription/3" class="card mb-5" style="width: 12rem; height: 6rem">
+            <div class="card-body d-flex justify-content-between">
+                <div class="pr-3 bg-white border-none">
+                    <img height="50" width="50" src="https://unpkg.com/simple-icons@v4/icons/hbo.svg" />
+                </div>
+                <div class="text-right">
+                    <h2 class="m-0">$10</h2>
+                    <p class="small m-0">monthly</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="/subscription/4" class="card mb-5" style="width: 12rem; height: 6rem">
+            <div class="card-body d-flex justify-content-between">
+                <div class="pr-3 bg-white border-none">
+                    <img height="50" width="50" src="https://unpkg.com/simple-icons@v4/icons/dropbox.svg" />
+                </div>
+                <div class="text-right">
+                    <h2 class="m-0">$10</h2>
+                    <p class="small m-0">monthly</p>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+    {% endblock %}

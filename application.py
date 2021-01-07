@@ -1,4 +1,5 @@
 import os 
+from helpers import login_required
 from flask import Flask,  flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -36,7 +37,9 @@ def index():
     return render_template('index.html')
 
 @app.route('/home')
+@login_required
 def home():
+    
     return render_template('home.html')
 
 @app.route('/login', methods=["GET", "POST"])
@@ -45,11 +48,11 @@ def login():
     # Forget any user_id
     session.clear()
 
-    email = request.form.get("email")
-    password = request.form.get("password")
-
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
+
+        email = request.form.get("email")
+        password = request.form.get("password")
 
         # Ensure email was submitted
         if not email:
@@ -59,18 +62,18 @@ def login():
         elif not password:
             return "must provide password"
 
-        # Query database for username
-        user = User.query.filter_by(email=email)
+        # Query database for email
+        user = User.query.filter_by(email=email).first()
 
-    #     # Ensure username exists and password is correct
-    #     if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-    #         return apology("invalid username and/or password", 403)
+        # Ensure email exists and password is correct
+        if not user or not check_password_hash(user.password, password):
+            return "invalid email and/or password"
 
-    #     # Remember which user has logged in
-    #     session["user_id"] = rows[0]["id"]
+        # Remember which user has logged in
+        session["user_id"] = user.id
 
-    #     # Redirect user to home page
-    #     return redirect("/")
+        # Redirect user to home page
+        return redirect("home")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -128,7 +131,7 @@ def logout():
     # Forget any user_id
     session.clear()
 
-    # Redirect user to login form
+    # Redirect user to index page
     return redirect("/")
 
 
