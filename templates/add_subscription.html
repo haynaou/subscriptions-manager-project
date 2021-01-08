@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+
+{% block main %}
+<div class="container mt-5" style="width: 20rem"> 
+    <h2 class="my-5">Add a subscription</h2>
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <b>Error:</b> {{ error }}
+        </div>
+    {% endif %}
+
+    <form action="/add-subscription" method="post">
+        <div class="form-group">
+            <label for="service">Service</label>
+            <select class="form-control" name="service" id="service">
+                <option disabled selected value="">Select service</option>
+                {% for service in services %}
+                    <option value="{{service['icon']}}">{{service['name']}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="subscribed_on">Subscribed On</label>
+            <input id="subscribed_on" autocomplete="off" autofocus class="form-control" name="subscribed_on" placeholder="Subscribed on" type="date">
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input id="price" class="form-control" name="price" placeholder="Price" type="numeric">
+        </div>
+
+        <div class="form-group">
+            <label for="recurrence">Recurrence</label>
+            <select id="recurrence" class="form-control" name="recurrence">
+                <option disabled selected value="">Recurrence</option>
+                {% for recurrence in recurrences %}
+                    <option value="{{recurrence}}">{{recurrence}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group text-right mt-5">
+            <button class="btn btn-secondary" type="submit">Add</button>
+        </div>
+    </form>
+</div>
+    
+{% endblock %}

@@ -22,13 +22,12 @@ class Recurrence(enum.Enum):
 class Subscription(db.Model):
     __tablename__ = "subscriptions"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, nullable=False)
+    service = db.Column(db.String(120), nullable=False)
     subscribed_on = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Numeric(precision=2), nullable=False)
     recurrence = db.Column(db.Enum(Recurrence), nullable=False)
-    icon = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
-        return  '<Subscription id={id} name={name} subscribed_on={subscribed_on} price={price} recurrence={recurrence} icon={icon} user_id={user_id}>'.format(id=id, name=name, subscribed_on=subscribed_on, price=price, recurrence=recurrence, icon={icon}, user_id=user_id )
+        return  "<Subscription id={0} service={1} subscribed_on={2} price={3} recurrence={4} user_id={5}>".format(self.id, self.service, self.subscribed_on, self.price, self.recurrence, self.user_id)
 

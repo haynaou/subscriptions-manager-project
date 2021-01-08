@@ -1,0 +1,36 @@
+{
+    "services": [
+        {
+            "icon": "netflix",
+            "name": "Netflix"
+        },
+        {
+            "icon": "spotify",
+            "name": "Spotify"
+        },
+        {
+            "icon": "dropbox",
+            "name": "Dropbox"
+        },
+        {
+            "icon": "amazonprime",
+            "name": "Amazon Prime"
+        },
+        {
+            "icon": "hbo",
+            "name": "HBO"
+        },
+        {
+            "icon": "hulu",
+            "name": "Hulu"
+        },
+        {
+            "icon": "at-and-t",
+            "name": "ATT"
+        },
+        {
+            "icon": "applemusic",
+            "name": "Apple Music"
+        }
+    ]
+}
