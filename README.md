@@ -1,1 +1,1 @@
-# subscriptions-manager-project
+# Subman - Subscriptions Manager Project

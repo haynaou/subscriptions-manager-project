@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container mt-5" style="width: 20rem">
+    <h2 class="my-5">Subscription {{subscription['id']}}</h2>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        <b>Error:</b> {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="/subscription/{{subscription['id']}}/update" method="post">
+        <div class="form-group">
+            <label for="service">Service</label>
+            <select class="form-control" name="service" id="service">
+                {% for service in services %}
+                {% if subscription['service'] == service['icon'] %}
+                <option selected value="{{service['icon']}}">{{service['name']}}</option>
+                {% else %}
+                <option value="{{service['icon']}}">{{service['name']}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="subscribed_on">Subscribed On</label>
+            <input id="subscribed_on" value="{{subscription['subscribed_on']}}" autocomplete="off" autofocus
+                class="form-control" name="subscribed_on" placeholder="Subscribed on" type="date">
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input id="price" value="{{subscription['price']}}" class="form-control" name="price" placeholder="Price"
+                type="numeric">
+        </div>
+
+        <div class="form-group">
+            <label for="recurrence">Recurrence</label>
+            <select id="recurrence" class="form-control" name="recurrence">
+                <option disabled selected value="">Recurrence</option>
+                {% for recurrence in recurrences %}
+                {% if subscription['recurrence'] == recurrence %}
+                <option selected value="{{recurrence}}">{{recurrence}}</option>
+                {% else %}
+                <option value="{{recurrence}}">{{recurrence}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group text-right mt-5">
+            <button class="btn btn-primary" type="submit">Edit</button>
+        </div>
+    </form>
+
+    <form action="/subscription/{{subscription['id']}}/delete" method="post">
+        <div class="form-group text-right mt-5">
+            <button class="btn btn-danger" type="submit">Delete</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

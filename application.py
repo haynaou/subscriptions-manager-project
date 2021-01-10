@@ -1,16 +1,20 @@
 import os 
 import json
 from datetime import datetime
-from helpers import login_required
+from helpers import login_required, is_float, is_valid_email
 from flask import Flask,  flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from tempfile import mkdtemp
-from models import User, Subscription, db
+from models import User, Subscription, db, Recurrence
 from werkzeug.security import check_password_hash, generate_password_hash
 
 with open('./static/services.json') as f:
   services_file = json.load(f)
+
+recurrences = [r.name for r in Recurrence]
+services = services_file["services"]
+
 
 # Configure application
 app = Flask(__name__)
@@ -40,10 +44,98 @@ def after_request(response):
 def index():
     return render_template('index.html')
 
+
+# GET /subscription/1         -> get_subscription
+# POST /subscription/1/update -> delete_subscription
+# POST /subscription/1/delete -> delete_subscription
+
+@app.route('/subscription/<id>', methods = ['GET'])
+@login_required
+def get_subscription(id):
+    subscription = Subscription.query.filter_by(id=id, user_id=session['user_id']).first()
+    if not subscription:
+        return render_template('404.html')
+
+    sub = {
+        'id': subscription.id,
+        'service': subscription.service,
+        'subscribed_on': subscription.subscribed_on,
+        'recurrence': subscription.recurrence.name.lower(),
+        'price': round(subscription.price, 2)
+    }
+
+    return render_template('subscription.html', subscription=sub, services=services, recurrences= recurrences)
+
+
+@app.route('/subscription/<id>/update', methods = ['POST'])
+@login_required
+def update_subscription(id):
+    subscription = Subscription.query.filter_by(id=id).first()
+    if not subscription:
+        return render_template('404.html')
+
+    # Get data from form
+    service = request.form.get('service')
+    subscribed_on = request.form.get('subscribed_on')
+    price = request.form.get('price')
+    recurrence = request.form.get('recurrence')
+
+    #Check if service and date are not empty
+    error = None
+    if not service or service == '' or service not in [s['icon'] for s in services]:
+        error = 'invalid service'
+    elif not subscribed_on or subscribed_on == '':
+        error = 'Invalid Subscription On value'
+    elif not price or not is_float(price) or float(price) <= 0:
+        error = 'Invalid price'
+    elif not recurrence or recurrence == '' or recurrence.lower() not in recurrences:
+        error = 'Invalid recurrence'
+
+    if error != None:
+        return render_template("add_subscription.html", recurrences=recurrences, services=services, error=error)
+
+    # Update current subscription
+    price = round(float(price), 2)
+    subscribed_on = datetime.strptime(subscribed_on, '%Y-%m-%d')
+    recurrence = recurrence.lower()
+
+    subscription.service = service
+    subscription.subscribed_on = subscribed_on
+    subscription.price = price
+    subscription.recurrence = recurrence
+
+    db.session.commit()
+    
+    flash('Subscription updated!')
+    return redirect('/home')
+
+@app.route('/subscription/<id>/delete', methods = ['POST'])
+@login_required
+def delete_subscription(id):
+    subscription = Subscription.query.filter_by(id=id).first()
+    if not subscription:
+        return render_template('404.html')
+
+    db.session.delete(subscription)
+    db.session.commit()
+    
+    flash('Subscription deleted!')
+    return redirect('/home')
+        
+
 @app.route('/home')
 @login_required
 def home():
-    return render_template('home.html')
+    subscriptions = Subscription.query.filter_by(user_id = session["user_id"]).all()
+    subs = []
+    for subscription in subscriptions:
+        subs.append({
+            'id': subscription.id,
+            'price': round(subscription.price, 2),
+            'recurrence': subscription.recurrence.name,
+            'service': subscription.service
+        })
+    return render_template('home.html', subscriptions=subs)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -53,17 +145,18 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
         email = request.form.get("email")
         password = request.form.get("password")
 
-        # Ensure email was submitted
+        error = None
         if not email:
-            return "must provide an email"
-
-        # Ensure password was submitted
+            error = 'Missing email'
         elif not password:
-            return "must provide password"
+            error = 'Missing password'
+        
+        if error != None:
+            return render_template("login.html", error=error)
+
 
         # Query database for email
         user = User.query.filter_by(email=email).first()
@@ -79,8 +172,7 @@ def login():
         return redirect("home")
 
     # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
+    return render_template("login.html")
 
 @app.route('/register' , methods=["GET", "POST"])
 def register():
@@ -95,57 +187,35 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
-        # Validate email
-        if not email or email == '':
-            return "Must provide email"
-
-        # Validate password
-        if not password or password == '':
-            return "Must provide password"
-
-        # Validate password confirmation
-        if not confirmation or confirmation == '':
-            return "Must provide password confirmation"
+        error = None
+        if not email or not is_valid_email(email):
+            error = 'Missing or invalid email'
+        elif not password:
+            error = 'Missing password'
+        elif not confirmation or confirmation == '':
+            error = 'Missing password confirmation'
+        elif confirmation != password:
+            error = 'Password and password confirmation do not match'
         
-        # Ensure password and password confirmation match
-        if confirmation != password:
-            return "Password and confirmation do not match"
+        if error != None:
+            return render_template("register.html", error=error)
 
         # Ensure email isn't already taken
         num = User.query.filter_by(email=email).count()
-        print(num)
         if num > 0:
             return "Email already taken"
 
         # Create new user
         new_user = User(full_name=full_name, email=email, password=generate_password_hash(password))
-        print(new_user)
         db.session.add(new_user)
         db.session.commit()
 
         # Redirect user to login page
         return redirect("/login")
 
-
-@app.route('/test')
-def test():
-    date_time_str = '01/07/2021'
-    date_time_obj = datetime.strptime(date_time_str, '%m/%d/%Y')
-
-    new_subscription = Subscription(service='netflix', subscribed_on=date_time_obj, price='12',  recurrence='monthly', user_id=1)
-    db.session.add(new_subscription)
-    db.session.commit()
-
-    print(new_subscription)
-    return 'test'
-
 @app.route('/add-subscription', methods=["GET", "POST"])
 @login_required
 def add_subscription():
-
-    recurrences = ['Weekly', 'Monthly', 'Yearly']
-    services = services_file["services"]
-
     if request.method == 'GET':
         return render_template("add_subscription.html", recurrences=recurrences, services=services)
 
@@ -156,35 +226,40 @@ def add_subscription():
         price = request.form.get('price')
         recurrence = request.form.get('recurrence')
 
+        #Check if service and date are not empty
         error = None
-        
-        if not service or service == '':
+        if not service or service == '' or service not in [s['icon'] for s in services]:
             error = 'invalid service'
         elif not subscribed_on or subscribed_on == '':
             error = 'Invalid Subscription On value'
+        elif not price or not is_float(price) or float(price) <= 0:
+            error = 'Invalid price'
+        elif not recurrence or recurrence == '' or recurrence.lower() not in recurrences:
+            error = 'Invalid recurrence'
 
         if error != None:
             return render_template("add_subscription.html", recurrences=recurrences, services=services, error=error)
 
         # Create new subscription
+        price = round(float(price), 2)
+        subscribed_on = datetime.strptime(subscribed_on, '%Y-%m-%d')
+        recurrence = recurrence.lower()
+
         new_subscription = Subscription(service=service, 
             subscribed_on=subscribed_on,
             price=price, 
             recurrence=recurrence,
             user_id=session["user_id"])
 
-        print(new_subscription)
         db.session.add(new_subscription)
         db.session.commit()
     
-        # Redirect user to login page
         return redirect("/home")
 
 
 @app.route("/logout")
 def logout():
     '''Log user out'''
-
     # Forget any user_id
     session.clear()
 

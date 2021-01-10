@@ -12,7 +12,7 @@ class User(db.Model):
     subscriptions = db.relationship("Subscription")
 
     def __repr__(self):
-        return '<User %r>' % self.full_name
+        return '<User id={0} full_name={1} email={2} >'.format(self.id, self.full_name, self.email)
 
 class Recurrence(enum.Enum):
     weekly = 1
@@ -23,9 +23,9 @@ class Subscription(db.Model):
     __tablename__ = "subscriptions"
     id = db.Column(db.Integer, primary_key=True)
     service = db.Column(db.String(120), nullable=False)
-    subscribed_on = db.Column(db.DateTime, nullable=False)
-    price = db.Column(db.Numeric(precision=2), nullable=False)
+    subscribed_on = db.Column(db.Date, nullable=False)
     recurrence = db.Column(db.Enum(Recurrence), nullable=False)
+    price = db.Column(db.Numeric, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):

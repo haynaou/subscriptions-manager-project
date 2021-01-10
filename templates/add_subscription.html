@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 
-
 {% block main %}
 <div class="container mt-5" style="width: 20rem"> 
     <h2 class="my-5">Add a subscription</h2>
@@ -12,9 +11,10 @@
     {% endif %}
 
     <form action="/add-subscription" method="post">
+
         <div class="form-group">
             <label for="service">Service</label>
-            <select class="form-control" name="service" id="service">
+            <select class="form-control" name="service" id="service" required>
                 <option disabled selected value="">Select service</option>
                 {% for service in services %}
                     <option value="{{service['icon']}}">{{service['name']}}</option>
@@ -24,17 +24,17 @@
 
         <div class="form-group">
             <label for="subscribed_on">Subscribed On</label>
-            <input id="subscribed_on" autocomplete="off" autofocus class="form-control" name="subscribed_on" placeholder="Subscribed on" type="date">
+            <input id="subscribed_on" autocomplete="off" autofocus class="form-control" name="subscribed_on" placeholder="Subscribed on" type="date" required>
         </div>
 
         <div class="form-group">
             <label for="price">Price</label>
-            <input id="price" class="form-control" name="price" placeholder="Price" type="numeric">
+            <input id="price" class="form-control" name="price" placeholder="Price" type="numeric" required>
         </div>
 
         <div class="form-group">
             <label for="recurrence">Recurrence</label>
-            <select id="recurrence" class="form-control" name="recurrence">
+            <select id="recurrence" class="form-control" name="recurrence" required>
                 <option disabled selected value="">Recurrence</option>
                 {% for recurrence in recurrences %}
                     <option value="{{recurrence}}">{{recurrence}}</option>
@@ -45,7 +45,7 @@
         <div class="form-group text-right mt-5">
             <button class="btn btn-secondary" type="submit">Add</button>
         </div>
+
     </form>
 </div>
-    
 {% endblock %}
