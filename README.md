@@ -1,19 +1,48 @@
 # Subman - Subscriptions Manager Project
 
-Subsman is a web application that allows users to manage their subscriptions by adding subscriptions cards containing the service name, the date of subscription, the price and the recurrence of the payment. Also it allows editing cards or deleting them after creation. 
+## Description
+Subsman is a web application that allows users to manage (CRUD) their service subscriptions (Netflix, Amazon Prime...) and offers the following features:
+- Adding subscriptions containing:
+    - Service name
+    - Date of subscription start
+    - Price
+    - Recurrence of the payment 
 
-# Usage
+## Technologies
+- Python3
+- Flask
+- HTML
+- Css
+- SQLAlchemy
+- SQLite
 
+## Usage
+1. Install python packages
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+2. Create SQLite database: from the project folder run:
+    ```bash
+    sqlite3 subman.db
+    .exit
+    ```
+3. Start the flask server:
+    ```bash
+    python3 application.py
+    ```
+4. Open browser and go to the address http://localhost:5000
 
-# Technologies
-• Python  
+## Screenshots
+- Index page:
+![](https://i.imgur.com/Mjnzub0.png)
 
-• Flask  
+- Login/Register:
+![](https://i.imgur.com/BgsJQFn.png)
+![](https://i.imgur.com/DaqBciL.png)
 
-• HTML
+- Add subscription:
+![](https://i.imgur.com/sXPdeWQ.png)
 
-• Css
-
-• SQLAlchemy
-
-• SQLite
+- Update/delete subscription:
+![](https://i.imgur.com/4P66v66.png)
+![](https://i.imgur.com/PmSKpSU.png)
