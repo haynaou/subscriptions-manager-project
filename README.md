@@ -6,9 +6,14 @@ Subsman is a web application that allows users to manage their subscriptions by 
 
 
 # Technologies
-• Python
-• Flask
+• Python  
+
+• Flask  
+
 • HTML
+
 • Css
+
 • SQLAlchemy
+
 • SQLite
