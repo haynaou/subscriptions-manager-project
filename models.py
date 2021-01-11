@@ -15,9 +15,9 @@ class User(db.Model):
         return '<User id={0} full_name={1} email={2} >'.format(self.id, self.full_name, self.email)
 
 class Recurrence(enum.Enum):
-    weekly = 1
-    monthly = 2
-    yearly = 3
+    Weekly = 1
+    Monthly = 2
+    Yearly = 3
 
 class Subscription(db.Model):
     __tablename__ = "subscriptions"
