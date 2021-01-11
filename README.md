@@ -11,8 +11,8 @@ Subsman is a web application that allows users to manage (CRUD) their service su
 ## Technologies
 - Python3
 - Flask
-- HTML
-- Css
+- HTML/CSS
+- Bootstrap
 - SQLAlchemy
 - SQLite
 
