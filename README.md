@@ -1,7 +1,7 @@
 # Subman - Subscriptions Manager Project
 
 ## Description
-Subsman is a web application that allows users to manage (CRUD) their service subscriptions (Netflix, Amazon Prime...) and offers the following features:
+Subman is a web application that allows users to manage (CRUD) their service subscriptions (Netflix, Amazon Prime...) and offers the following features:
 - Adding subscriptions containing:
     - Service name
     - Date of subscription start
